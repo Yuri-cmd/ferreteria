@@ -1,0 +1,11 @@
+*{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.borde-p{
+    border-bottom: 1px solid #4c4c4c;
+    border-bottom-style: dotted;
+}
+.border-top{
+    border-top: 1px solid #4472c4;
+}

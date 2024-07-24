@@ -1,0 +1,557 @@
+/*----------------------------------------------
+  INICO  COMMON  STYLES
+------------------------------------------------*/
+body {
+  font-family: 'Open Sans', sans-serif !important;
+  background: #1F1F1F !important;
+
+}
+
+.bg-primary {
+  color: #fff!important;
+  background-color: #007bff!important;
+}
+.bg-success {
+  color: #fff!important;
+  background-color: #28a745!important;
+}
+.bg-warning {
+  color: #212529!important;
+  background-color: #ffc107!important;
+}
+.bg-info {
+  color: #fff!important;
+  background-color: #17a2b8!important;
+}
+.bg-danger {
+  color: #fff!important;
+  background-color: #dc3545!important;
+}
+
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 6px 0;
+  font-size: 12px;
+  line-height: 1.42;
+  border-radius: 15px;
+}
+.modal-header{
+  background-color:#0866c6;
+  color:white;
+  text-align: center;
+}
+.table thead{
+  background-color:#0866c6;
+  color:white;
+}
+.panel-default{
+  border-radius: 0 !important;
+  margin-bottom: 5px !important;
+  background: #FFFFFF !important;
+  border-color: #FFFFFF !important;
+  -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.9) !important;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.9) !important;
+}
+.row-nav-breadcrumb div h2{
+  margin-top: 7px !important;
+  margin-bottom: -5px !important;
+}
+.row-nav-breadcrumb div .breadcrumb strong{
+  font-weight: 700 !important;
+  font-size: 13px !important;
+}
+.row-nav-breadcrumb div .breadcrumb{
+  padding: 12px 10px 12px 20px !important;
+  -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.5) !important;
+  box-shadow: 0 1px 1px rgba(0,0,0,0.5) !important;
+}
+.row-nav-breadcrumb div .breadcrumb>li:before{
+  color: #1F1F1F !important;
+}
+.row-nav-breadcrumb div .new5{
+  border: 2px solid #0866C6 !important;
+  border-radius: 5px !important;
+  margin: 5px 0 2px 0px !important;
+}
+.line-body {
+  border: 0.9px solid #6c6868 !important;
+}
+.no-radius{
+  border-radius: 0px !important;
+}
+.no-padding{
+  padding: 0 !important;
+}
+.no-mb{
+  margin-bottom: 0px !important;
+}
+.padding-footer{
+  padding-bottom: 15px !important;
+}
+.no-border{
+  border: 0 !important;
+}
+.no-margin{
+  margin: 0 !important;
+}
+.bg-azul-head{
+  background: #0a6bce !important;
+  color: white !important;
+}
+.no-display{
+  display: none !important;
+}
+.yes-display{
+  display: block !important;
+}
+#file-preview-zone{
+  -webkit-box-shadow: 0px 2px 6px 3px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 2px 6px 3px rgba(0,0,0,0.75);
+  box-shadow: 0px 2px 6px 3px rgba(0,0,0,0.75);
+}
+.cel-border-y-none{
+  border-top-color: #FFFFFF !important;
+  border-bottom-color: #FFFFFF !important;
+}
+.cel-border-box{
+  border-top-color: #FFFFFF !important;
+}
+.panel-box{
+  padding-top: 25px !important;
+}
+
+
+.line-frame{
+  width: 100%;
+  height: 0.15em;
+  background: rgba(34,80,129,0.55);
+}
+.line-frame-modal{
+  width: 100%;
+  height: 0.08em !important;
+  background: rgba(18, 12, 198, 0.56) !important;
+}
+.color-modal-header {
+  background: #0866c6;
+  color: #FFFFFF;
+}
+
+
+
+
+
+
+/*
+.nav-top .menu-bar-lodi ul> menu-bar-lodi-li{
+  margin-right: 3px !important;
+}
+.nav-top .menu-bar-lodi ul> menu-bar-lodi-li>.a-nav{
+  color: rgb(255, 255, 255);
+  font-size: 13px !important;
+  padding: 20px !important;
+}
+
+*/
+
+
+
+
+
+/*
+.nav-top .menu-bar-lodi .nav .dropdown .dropdown-toggle{
+  color: rgb(255, 255, 255) !important;
+}
+.nav-top .menu-bar-lodi .nav .dropdown .dropdown-toggle:focus{
+  background: rgb(34, 80, 129) !important;
+}
+.dropdown-user{
+  min-width: 233px !important;
+  padding: 0 !important;
+}
+.nav-top  .dropdown-menu>li>a {
+  display: block !important;
+  padding: 3px 20px !important;
+  font-size: 13px !important;
+  color: white;
+}
+.nav-top  .dropdown-menu>li>a:hover {
+ background: #0a6bce !important;
+}
+.nav-top .dropdown-user li {
+  margin: 8px 0;
+}
+.dropdown-user-sub{
+  position: absolute !important;
+  background: white !important;
+}
+.dropdown-user-sub>li>a:hover{
+  background: #0a6bce !important;
+  color: white !important;
+}
+.bg-azul .navbar-header button:active{
+  background-color: #283643 !important;
+}
+.bg-azul .navbar-header button:hover{
+  background-color: #283643 !important;
+}
+
+.content-a-nav{
+  width: 78px !important;
+}
+.content-a-nav:focus{
+  background: rgb(34, 80, 129) !important;
+}
+.a-xs{
+  padding: 20px 0 20px 20px !important;
+  color: #FFFFFF !important;
+}
+.a-xs:focus{
+  background: rgb(34, 80, 129) !important;
+}
+.content-a-nav .dropdown-user-sub{
+    min-width: 260px !important;
+}
+*/
+
+/*.content-select .dropdown .dropdown-menu{
+  !* overflow: hidden !important;*!
+   overflow: auto !important;
+   min-width: 100% !important;
+}
+.content-select .dropdown .dropdown-menu .open{
+   overflow: initial !important;
+}
+.content-select .dropdown .dropdown-menu .open ul{
+  margin-top: 37px !important;
+  margin-bottom: 7px !important;
+  !*overflow: scroll !important;*!
+}
+.content-select .dropdown .dropdown-menu .open .inner li a:hover{
+  background: #0866C6 !important;
+  color: white !important;
+}*/
+
+.pd-t-20{
+  padding-top: 20px !important;
+}
+
+.modal-bg-none{
+  background: rgba(0,0,0,.0001) !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+.nav-top .dropdown-menu li {
+min-width: 230px !important;
+border-radius: 0 0 4px 4px !important;
+border: 0 !important;
+}
+*/
+
+
+/*.nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
+  background-color: #075CB3 !important;
+  border-color: #075CB3 !important;
+}*/
+/*.nav-top .menu-bar-lodi ul> menu-bar-lodi-li>a:hover{
+  color: rgb(255, 255, 255);
+  background: rgb(34, 80, 129);
+}
+.nav-top .navbar-brand {
+  color: #fff !important;
+  width: 260px !important;
+  text-align: left;
+  height: 60px;
+  font-size: 24px;
+  font-weight: 700;
+  !* text-transform: uppercase; *!
+  line-height: 30px;
+  background: #0866c6;
+}
+.navbar-nav {
+   margin: 0 !important;
+}*/
+
+
+
+
+/*----------------------------------------------
+  INICO  LODI COLORS STYLES
+------------------------------------------------*/
+
+.fg-black{
+  color: #000000;
+}
+.fg-azul{
+  color: #0866C6;
+}
+
+.fg-blanco{
+  color: rgb(255, 255, 255) !important;
+}
+
+
+
+
+
+
+.bg-azul{
+  background: #0866c6 !important;
+
+}
+.bg-blanco{
+  background: #FFFFFF !important;
+
+}
+
+
+/*----------------------------------------------
+  INICO  LODI COLORS STYLES
+------------------------------------------------*/
+
+
+
+
+#wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+#page-wrapper {
+  padding: 10px 10px;
+  min-height: 100%;
+  background: #E8E8E8;
+}
+#page-inner {
+  width:100%;
+  margin:10px 20px 10px 0px;
+  background-color:transparent;
+  padding: 0 20px !important;
+  min-height:950px;
+}
+
+
+/*.header .container-fluid{
+  padding:0;
+}*/
+/*
+.text-center {
+  text-align:center;
+}
+.fileContainer {
+  overflow: hidden;
+  position: relative;
+}
+*/
+
+
+/*.fileContainer [type=file] {
+  cursor: inherit;
+  display: block;
+  font-size: 999px;
+  filter: alpha(opacity=0);
+  min-height: 100%;
+  min-width: 100%;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  top: 0;
+}
+.no-boder {
+  border:1px solid #f3f3f3;
+}*/
+
+/*h1, .h1, h2, .h2, h3, .h3 {
+  margin-top: 7px;
+  margin-bottom: -5px;
+}*/
+/*h2 {
+  color: #000;
+}
+h4 {
+  padding-top:10px;
+}*/
+/*.square-btn-adjust {
+  border: 0px solid transparent;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+
+}*/
+/*p {
+  font-size:16px;
+  line-height:25px;
+  padding-top:20px;
+}*/
+/*.navbar-side {
+  z-index: 0;
+}*/
+/*.panel{
+  border-radius:0px;
+}*/
+
+.navbar-side .nav > li > a > i{
+  color: #FFFFFF;
+  padding: 8px;
+  width: 30px;
+  text-align: center;
+}
+/*.top-navbar{
+  position: fixed;
+  width: 100%;
+  z-index: 300;
+  -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.05);
+}*/
+/*.navbar-side {
+  z-index: 1;
+  position: fixed;
+  width: 260px;
+  top: 9%;
+}*/
+/*#page-wrapper {
+  position: relative;
+  top: 55px;
+  !* width: 1000px; *!
+  !* height: 100px; *!
+  box-shadow: 0 0 10px #757575;
+  -moz-box-shadow: 0 0 10px #757575;
+  -webkit-box-shadow: 0 0 10px #757575;
+}*/
+.top-navbar .nav > li > a:hover, .top-navbar .nav > li > a:focus {
+  text-decoration: none;
+  background-color: #2497BA;
+  color: #fff;
+}
+/*
+.nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
+  background-color: #075CB3;
+  border-color: #075CB3;
+}
+.breadcrumb {
+  padding: 12px 10px 12px 20px;
+  margin-bottom: 5px;
+  list-style: none;
+  background: #fff;
+  border-radius: 0;
+  -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.5);    box-shadow: 0 1px 1px rgba(0,0,0,0.5);
+}
+.breadcrumb li+li:before {
+  padding:8px;
+  color: black;
+  content: "/\00a0";
+}
+.dropdown-menu>li>a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #333;
+  white-space: nowrap;
+  font-size: 13px;
+}*/
+/*.dropdown-menu>li>a i {
+  color: #1F1F1F;
+}
+.dropdown-menu>li>a i:hover {
+  color: #fff;
+}*/
+/*.badge {
+  display: inline-block;
+  min-width: 10px;
+  padding: 4px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  background-color: #24C2CE;
+  border-radius: 10px;
+}*/
+
+/*----------------------------------------------
+  INICO  COMMON  STYLES
+------------------------------------------------*/
+
+
+.top-navbar {
+  background: #0866c6 !important;
+  border-bottom: none !important;
+  margin: 0  !important;
+}
+.navbar-default {
+  border: 0 solid black;
+}
+.top-navbar {
+  position: fixed;
+  width: 100% !important;
+  z-index: 300 !important;
+  -webkit-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.05) !important;
+  -moz-box-shadow: 0 3px 3px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.05) !important;
+  margin: 0 !important;
+}
+.navbar-header {
+  background: transparent !important;
+}
+.navbar-default .navbar-toggle {
+  border-color: #fff !important;
+}
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #FFF !important;
+}
+.top-navbar .nav > li {
+  position: relative !important;
+  display: inline-block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.top-navbar .nav > li > a {
+  position: relative !important;
+  display: block !important;
+  padding: 20px !important;
+  color: #FFFFFF !important;
+  margin: 0 !important;
+}
+.top-navbar .nav > li > a > i {
+  margin-right: 2px !important;
+}
+.nav > li > a > i {
+  margin-right: 10px !important;
+  color: rgba(255, 255, 255, 0.76) !important;
+}
+.top-navbar .dropdown-menu {
+  min-width: 230px !important;
+  border-radius: 0 0 4px 4px !important;
+  border: 0 !important;
+}
+.dropdown-user li {
+  margin: 8px 0 !important;
+}
+.top-navbar .nav > li {
+  position: relative !important;
+  display: inline-block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
