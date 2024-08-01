@@ -70,7 +70,7 @@ if (!isset($_SESSION['usuario_erp'])) {
                                     </div>
                                     <div class="row">
                                         <div class="mt-2 col-lg-4 col-md-4 col-sm-6">
-                                            <a href="./almacen/inventario">
+                                            <a href="{{route('almacen')}}">
                                                 <div class="onliborder box-unit boxclice"
                                                     style="background-color: #0073b6;">
                                                     <div class="headbox" style="">
