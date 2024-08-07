@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ComprasController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HistorialMovimientoController;
+use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoUnidadController;
 use App\Http\Controllers\UbicacionController;
@@ -46,6 +47,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/unidades-derivadas-store', [UnidadController::class, 'store'])->name('unidadDerivada.store');
     Route::post('/ubicaciones', [UbicacionController::class, 'store'])->name('ubicacion.store');
     Route::post('/categorias', [CategoriaController::class, 'store'])->name('categoria.store');
+    Route::post('/marcas', [MarcaController::class, 'store'])->name('marca.store');
     Route::post('/delete/unidad-derivada', [ProductoUnidadController::class, 'delete'])->name('productounidad.delete');
     Route::post('/productos/clonar', [ProductoController::class, 'clonar'])->name('productos.clonar');
     Route::post('/productos/updateStatus', [ProductoController::class, 'updateStatus'])->name('productos.updateStatus');

@@ -415,7 +415,29 @@
                         $.each(data.unidad, function(i, v) {
                             newRow += '<tr>';
                             newRow += '<td>' + v.nombre + '</td>';
-                            newRow += '<td>' + (producto.precio * v.factor).toFixed(2) +
+                            newRow += '<td>' + parseFloat(v.factor).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.pcompra).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.porcentajeVenta).toFixed(
+                                2) + '</td>';
+                            newRow += '<td>' + parseFloat(v.ppublico).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.pespecial).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.pminimo).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.pultimo).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.comision).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.ganancia).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.comision2).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.comision3).toFixed(2) +
+                                '</td>';
+                            newRow += '<td>' + parseFloat(v.comision4).toFixed(2) +
                                 '</td>';
                             newRow += '<td>';
                             newRow +=
@@ -445,21 +467,44 @@
                 $('#edt-precio_modificable').val(precioCalculado);
             });
 
+
+
             $('#edt-agregar_unidad').on('click', function() {
                 var unidadId = $('#edt-unidad_derivada').val();
                 var unidadNombre = $('#edt-unidad_derivada option:selected').text();
                 var precio = $('#edt-precio_modificable').val();
+                let factor = $('#edt-factor').val();
+                let pcompra = $('#edt-precio_compra').val();
+                let v = $('#edt-porcentaje_venta').val();
+                let ppublico = $('#edt-precio_modificable').val();
+                let pespecial = $('#edt-precio_especial').val();
+                let pminimo = $('#edt-precio_minimo').val();
+                let pultimo = $('#edt-precio_ultimo').val();
+                let comis = $('#edt-comision').val();
+                let c2 = $('#edt-comision2').val();
+                let c3 = $('#edt-comision3').val();
+                let c4 = $('#edt-comision4').val();
+                let ga = (parseFloat(ppublico) - parseFloat(pcompra)).toFixed(2); // Calcular ganancia
 
                 if (unidadId && precio) {
                     var $tbody = $('#unidades-bodyEdit');
                     $tbody.append(`
                         <tr>
                             <td>${unidadNombre}</td>
+                            <td>${factor}</td>
+                            <td>${pcompra}</td>
+                            <td>${v}</td>
+                            <td>${ppublico}</td>
+                            <td>${pespecial}</td>
+                            <td>${pminimo}</td>
+                            <td>${pultimo}</td>
+                            <td>${comis}</td>
+                            <td>${ga}</td>
+                            <td>${c2}</td>
+                            <td>${c3}</td>
+                            <td>${c4}</td>
                             <td>
-                                <input type="text" name="costos[${unidadId}]" class="form-control" value="${precio}">
-                            </td>
-                            <td>
-                                <button type="button" class="btn btn-danger" onclick="removeRowEditRow(this)">Eliminar</button>
+                                <button type="button" class="btn btn-danger" onclick="removeRow(this)">Eliminar</button>
                             </td>
                         </tr>
                     `);
@@ -467,12 +512,35 @@
                     // Actualizar el campo oculto con los costos
                     var costos = [];
                     $('#unidades-bodyEdit tr').each(function() {
-                        var unidadId = $(this).find('input[name^="costos"]').attr('name').match(
-                            /\d+/)[0];
-                        var costo = $(this).find('input[name^="costos"]').val();
+                        var row = $(this);
+                        var unidadNombre = row.find('td:eq(0)').text();
+                        var factor = row.find('td:eq(1)').text();
+                        var pcompra = row.find('td:eq(2)').text();
+                        var porcentajeVenta = row.find('td:eq(3)').text();
+                        var ppublico = row.find('td:eq(4)').text();
+                        var pespecial = row.find('td:eq(5)').text();
+                        var pminimo = row.find('td:eq(6)').text();
+                        var pultimo = row.find('td:eq(7)').text();
+                        var comision = row.find('td:eq(8)').text();
+                        var ganancia = row.find('td:eq(9)').text();
+                        var comision2 = row.find('td:eq(10)').text();
+                        var comision3 = row.find('td:eq(11)').text();
+                        var comision4 = row.find('td:eq(12)').text();
+
                         costos.push({
-                            id: unidadId,
-                            costo: costo
+                            unidadId: unidadId,
+                            factor: factor,
+                            pcompra: pcompra,
+                            porcentajeVenta: porcentajeVenta,
+                            ppublico: ppublico,
+                            pespecial: pespecial,
+                            pminimo: pminimo,
+                            pultimo: pultimo,
+                            comision: comision,
+                            ganancia: ganancia,
+                            comision2: comision2,
+                            comision3: comision3,
+                            comision4: comision4
                         });
                     });
                     $('#edt-costos').val(JSON.stringify(costos));
@@ -668,34 +736,34 @@
                 });
             }
 
-            $('#id_medida').on('change', function() {
-                var unidadId = $(this).val();
+            // $('#id_medida').on('change', function() {
+            //     var unidadId = $(this).val();
 
-                if (unidadId) {
-                    $.ajax({
-                        url: '{{ route('getUnidadesDerivadas') }}',
-                        method: 'POST',
-                        data: {
-                            id_unidad: unidadId,
-                            _token: '{{ csrf_token() }}' // CSRF token for security
-                        },
-                        success: function(data) {
-                            var $unidadDerivadaSelect = $('#unidad_derivada');
-                            $unidadDerivadaSelect.empty();
-                            $unidadDerivadaSelect.append(
-                                '<option value="">--Elegir--</option>');
+            //     if (unidadId) {
+            //         $.ajax({
+            //             url: '{{ route('getUnidadesDerivadas') }}',
+            //             method: 'POST',
+            //             data: {
+            //                 id_unidad: unidadId,
+            //                 _token: '{{ csrf_token() }}' // CSRF token for security
+            //             },
+            //             success: function(data) {
+            //                 var $unidadDerivadaSelect = $('#unidad_derivada');
+            //                 $unidadDerivadaSelect.empty();
+            //                 $unidadDerivadaSelect.append(
+            //                     '<option value="">--Elegir--</option>');
 
-                            $.each(data, function(index, unidad) {
-                                $unidadDerivadaSelect.append('<option value="' + unidad
-                                    .id + '" data-factor="' + unidad.factor + '">' +
-                                    unidad.nombre + '</option>');
-                            });
-                        }
-                    });
-                } else {
-                    $('#unidad_derivada').empty().append('<option value="">--Elegir--</option>');
-                }
-            });
+            //                 $.each(data, function(index, unidad) {
+            //                     $unidadDerivadaSelect.append('<option value="' + unidad
+            //                         .id + '" data-factor="' + unidad.factor + '">' +
+            //                         unidad.nombre + '</option>');
+            //                 });
+            //             }
+            //         });
+            //     } else {
+            //         $('#unidad_derivada').empty().append('<option value="">--Elegir--</option>');
+            //     }
+            // });
 
 
             $('#unidad_derivada').on('change', function() {
@@ -708,19 +776,42 @@
                 $('#precio_modificable').val(precioCalculado);
             });
 
+            $('#precio_compra, #precio_modificable').on('input', calcularPorcentajeVenta);
+
             $('#agregar_unidad').on('click', function() {
                 var unidadId = $('#unidad_derivada').val();
                 var unidadNombre = $('#unidad_derivada option:selected').text();
                 var precio = $('#precio_modificable').val();
+                let factor = $('#factor').val();
+                let pcompra = $('#precio_compra').val();
+                let v = $('#porcentaje_venta').val();
+                let ppublico = $('#precio_modificable').val();
+                let pespecial = $('#precio_especial').val();
+                let pminimo = $('#precio_minimo').val();
+                let pultimo = $('#precio_ultimo').val();
+                let comis = $('#comision').val();
+                let c2 = $('#comision2').val();
+                let c3 = $('#comision3').val();
+                let c4 = $('#comision4').val();
+                let ga = (parseFloat(ppublico) - parseFloat(pcompra)).toFixed(2); // Calcular ganancia
 
                 if (unidadId && precio) {
                     var $tbody = $('#unidades-body');
                     $tbody.append(`
                         <tr>
                             <td>${unidadNombre}</td>
-                            <td>
-                                <input type="text" name="costos[${unidadId}]" class="form-control" value="${precio}">
-                            </td>
+                            <td>${factor}</td>
+                            <td>${pcompra}</td>
+                            <td>${v}</td>
+                            <td>${ppublico}</td>
+                            <td>${pespecial}</td>
+                            <td>${pminimo}</td>
+                            <td>${pultimo}</td>
+                            <td>${comis}</td>
+                            <td>${ga}</td>
+                            <td>${c2}</td>
+                            <td>${c3}</td>
+                            <td>${c4}</td>
                             <td>
                                 <button type="button" class="btn btn-danger" onclick="removeRow(this)">Eliminar</button>
                             </td>
@@ -730,12 +821,35 @@
                     // Actualizar el campo oculto con los costos
                     var costos = [];
                     $('#unidades-body tr').each(function() {
-                        var unidadId = $(this).find('input[name^="costos"]').attr('name').match(
-                            /\d+/)[0];
-                        var costo = $(this).find('input[name^="costos"]').val();
+                        var row = $(this);
+                        var unidadNombre = row.find('td:eq(0)').text();
+                        var factor = row.find('td:eq(1)').text();
+                        var pcompra = row.find('td:eq(2)').text();
+                        var porcentajeVenta = row.find('td:eq(3)').text();
+                        var ppublico = row.find('td:eq(4)').text();
+                        var pespecial = row.find('td:eq(5)').text();
+                        var pminimo = row.find('td:eq(6)').text();
+                        var pultimo = row.find('td:eq(7)').text();
+                        var comision = row.find('td:eq(8)').text();
+                        var ganancia = row.find('td:eq(9)').text();
+                        var comision2 = row.find('td:eq(10)').text();
+                        var comision3 = row.find('td:eq(11)').text();
+                        var comision4 = row.find('td:eq(12)').text();
+
                         costos.push({
-                            id: unidadId,
-                            costo: costo
+                            unidadId: unidadId,
+                            factor: factor,
+                            pcompra: pcompra,
+                            porcentajeVenta: porcentajeVenta,
+                            ppublico: ppublico,
+                            pespecial: pespecial,
+                            pminimo: pminimo,
+                            pultimo: pultimo,
+                            comision: comision,
+                            ganancia: ganancia,
+                            comision2: comision2,
+                            comision3: comision3,
+                            comision4: comision4
                         });
                     });
                     $('#costos').val(JSON.stringify(costos));
@@ -748,6 +862,7 @@
                     alert('Por favor, seleccione una unidad derivada y especifique un precio.');
                 }
             });
+
 
             var modalTitle = {
                 medida: 'Agregar Medida',
@@ -762,7 +877,12 @@
 
                 $('#modalLabel').text(modalTitle[type]);
                 $('#option_type').val(type);
-                $('#modal-add-prod').modal('hide');
+
+                // Ocultar el modal principal si está abierto
+                if ($('#modal-add-prod').hasClass('in')) {
+                    $('#modal-add-prod').modal('hide');
+                }
+                $('#nombre_option').val('')
             });
 
             // Manejar el envío del formulario
@@ -771,40 +891,52 @@
 
                 var nombreOption = $('#nombre_option').val();
                 var type = $('#option_type').val();
+                var route;
+                let id;
                 if (type == 'medida') {
                     route = '{{ route('unidad-medida.store') }}';
-                }
-                if (type == 'categoria') {
+                    id = 'id_medida';
+                } else if (type == 'categoria') {
                     route = '{{ route('categoria.store') }}';
-                }
-                if (type == 'ubicacion') {
+                    id = 'id_categoria';
+                } else if (type == 'ubicacion') {
                     route = '{{ route('ubicacion.store') }}';
+                    id = 'location';
+                } else if (type == 'marca') {
+                    route = '{{ route('marca.store') }}';
+                    id = 'brand';
                 }
+
                 $.ajax({
                     url: route, // 'medidas', 'categorias' o 'ubicaciones'
                     method: 'POST',
                     data: {
                         nombre: nombreOption,
-                        _token: token
+                        _token: '{{ csrf_token() }}' // Asegúrate de que el token CSRF esté disponible
                     },
                     success: function(data) {
                         // Cerrar el modal de agregar opción
                         $('#modal-add-option').modal('hide');
 
                         // Agregar la nueva opción al selector adecuado
-                        var select = $('#' + (type === 'medida' ? 'id_medida' : (type ===
-                            'categoria' ? 'id_categoria' : 'location')));
+                        var select = $('#' + id);
                         select.append('<option value="' + data.id + '">' + data.nombre +
                             '</option>');
 
-                        // Volver a abrir el modal principal si es necesario
-                        $('#modal-add-prod').modal('show');
+                        // Esperar a que el modal se cierre completamente antes de reabrir el modal principal
+                        $('#modal-add-option').on('hidden.bs.modal', function() {
+                            // Asegurarse de que el cuerpo tenga la clase 'modal-open'
+                            $('body').addClass('modal-open');
+                            $('#modal-add-prod').modal('show');
+                            $('#nombre_option').val('')
+                        });
                     },
                     error: function(xhr) {
                         console.error('Error:', xhr.responseText);
                     }
                 });
             });
+
 
             // Volver a abrir el modal principal si se cierra el modal de agregar opción
             $('#modal-add-option').on('hidden.bs.modal', function() {
@@ -814,6 +946,8 @@
             $('#modal-add-derivada').on('show.bs.modal', function(event) {
                 var button = $(event.relatedTarget);
                 $('#modal-add-prod').modal('hide');
+                $('#nombreu_option').val('');
+                $('#factor').val('');
             });
 
             $("#form-add-derivada").on('submit', function(e) {
@@ -829,7 +963,13 @@
                         var select = $('#unidad_derivada');
                         select.append('<option value="' + data.id + '">' + data.nombre +
                             '</option>');
+                        $('#modal-add-derivada').on('hidden.bs.modal', function() {
+                            // Asegurarse de que el cuerpo tenga la clase 'modal-open'
+                            $('body').addClass('modal-open');
+                            $('#modal-add-prod').modal('show');
+                        });
                         $('#modal-add-prod').modal('show');
+                        $('#nombreu_option').val('')
                     },
                 );
             });
@@ -1067,6 +1207,24 @@
         window.removeRow = function(button) {
             $(button).closest('tr').remove();
         };
+
+        function calcularPorcentajeVenta() {
+            console.log("dd");
+            var precioCompra = parseFloat($('#precio_compra').val());
+            var precioPublico = parseFloat($('#precio_modificable').val());
+            console.log(precioCompra, precioPublico);
+            if (!isNaN(precioPublico)) {
+                $('#precio_especial').val(precioPublico);
+                $('#precio_minimo').val(precioPublico);
+                $('#precio_ultimo').val(precioPublico);
+            }
+            if (!isNaN(precioCompra) && !isNaN(precioPublico) && precioCompra > 0) {
+                var porcentajeVenta = ((precioPublico - precioCompra) / precioCompra) * 100;
+                $('#porcentaje_venta').val(porcentajeVenta.toFixed(2)); // Redondear a dos decimales
+            } else {
+                $('#porcentaje_venta').val(''); // Limpiar el campo si los valores no son válidos
+            }
+        }
     </script>
 </body>
 

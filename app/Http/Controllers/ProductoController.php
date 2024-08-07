@@ -14,17 +14,8 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'descripcion' => 'required|string',
-            'codigo' => 'required|string|unique:productos',
-            'precio' => 'required|numeric',
-            'cantidad' => 'required|integer',
-            'technical_sheet' => 'nullable|file|mimes:pdf',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg',
-        ]);
-
         // Guardar el producto
-        $producto = Producto::create($request->except(['technical_sheet', 'image']));
+        $producto = Producto::create($request->except(['technical_sheet', 'image', 'costos']));
 
         // Procesar y guardar archivos si existen
         if ($request->hasFile('technical_sheet')) {
@@ -46,11 +37,21 @@ class ProductoController extends Controller
         foreach ($costos as $costo) {
             ProductoUnidad::create([
                 'id_producto' => $producto->id_producto,
-                'id_unidad_derivada' => $costo['id'],
-                'costo' => $costo['costo'],
+                'id_unidad_derivada' => $costo['unidadId'],
+                'factor' => $costo['factor'],
+                'pcompra' => $costo['pcompra'],
+                'porcentajeVenta' => $costo['porcentajeVenta'],
+                'ppublico' => $costo['ppublico'],
+                'pespecial' => $costo['pespecial'],
+                'pminimo' => $costo['pminimo'],
+                'pultimo' => $costo['pultimo'],
+                'comision' => $costo['comision'],
+                'ganancia' => $costo['ganancia'],
+                'comision2' => $costo['comision2'],
+                'comision3' => $costo['comision3'],
+                'comision4' => $costo['comision4'],
             ]);
         }
-
         return redirect()->back()->with('success', 'Producto guardado con éxito');
     }
 
@@ -73,8 +74,7 @@ class ProductoController extends Controller
             'id_medida' => 'required|integer',
             'id_categoria' => 'required|integer',
             'location' => 'nullable|integer',
-            'id_moneda' => 'required|integer',
-            'precio' => 'required|numeric',
+            'precio' => 'nullable|numeric',
             'costo' => 'nullable|numeric',
             'cantidad' => 'required|numeric',
             'codsunat' => 'nullable|string',
@@ -106,9 +106,9 @@ class ProductoController extends Controller
         $producto->id_medida = $validatedData['id_medida'];
         $producto->id_categoria = $validatedData['id_categoria'];
         $producto->location = $validatedData['location'];
-        $producto->id_moneda = $validatedData['id_moneda'];
-        $producto->precio = $validatedData['precio'];
-        $producto->costo = $validatedData['costo'];
+        $producto->id_moneda = $validatedData['id_moneda'] ?? null;
+        $producto->precio = $validatedData['precio'] ?? null;
+        $producto->costo = $validatedData['costo'] ?? null;
         $producto->cantidad = $validatedData['cantidad'];
         $producto->codsunat = $validatedData['codsunat'];
         $producto->peso = $validatedData['peso'];
@@ -140,7 +140,7 @@ class ProductoController extends Controller
         $producto->save();
 
         // Actualizar las unidades derivadas
-        if ($request->has('costos')) {
+        if ($request->has('costos') && $request->input('costos')) {
             $costos = json_decode($request->input('costos'), true);
             foreach ($costos as $costo) {
                 ProductoUnidad::create([
@@ -159,8 +159,8 @@ class ProductoController extends Controller
         // Encontrar el producto por su ID
         $producto = Producto::find($request->productoId);
         $unidad = DB::select('SELECT
-            producto_unidad.id,
-						unidad_derivada.nombre,
+            producto_unidad.*,
+            unidad_derivada.nombre,
             unidad_derivada.factor 
         FROM
             producto_unidad

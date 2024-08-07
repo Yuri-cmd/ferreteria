@@ -1,5 +1,66 @@
 @extends('layout')
 @section('content')
+    <style>
+        /* El contenedor del interruptor */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        /* Ocultar el checkbox real */
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Estilo para el slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        /* La parte del slider redondeada */
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+        }
+
+        /* Cuando el checkbox está marcado */
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        /* Cuando el checkbox está marcado, mover el slider a la derecha */
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Estilos para redondear el slider */
+        .round {
+            border-radius: 34px;
+        }
+
+        .round:before {
+            border-radius: 50%;
+        }
+    </style>
     <div id="wrapper">
         <!--/. NAV TOP  -->
         <nav class="navbar-default navbar-side hidden-lg hidden-md" role="navigation">
@@ -57,7 +118,8 @@
                                             <button data-toggle="modal" data-target="#modal-add-prod"
                                                 class="btn btn-primary"><i class="fa fa-plus"></i> Agregar
                                                 Producto</button>
-                                            <button id="clone-button" class="btn btn-primary"><i class="fa fa-clone"></i> Clonar Seleccionado</button>
+                                            <button id="clone-button" class="btn btn-primary"><i class="fa fa-clone"></i>
+                                                Clonar Seleccionado</button>
                                         </div>
 
                                         <!--BOTONES-->
@@ -150,19 +212,19 @@
                             <div class="row">
                                 <div class="form-group col-md-12 mt-2">
                                     <label>Descripci&oacute;n</label>
-                                    <textarea id="descripcion" name="descripcion" required class="form-control"></textarea>
+                                    <input id="descripcion" name="descripcion" required class="form-control"></input>
                                 </div>
                                 <div class="form-group col-md-12 mt-2">
                                     <label>Descripci&oacute;n Ticket</label>
-                                    <textarea id="ticket_description" name="ticket_description" class="form-control"></textarea>
+                                    <input id="ticket_description" name="ticket_description" class="form-control"></input>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>C&oacute;digo Producto</label>
-                                    <input id="codigo" name="codigo" type="text" class="form-control" readonly>
+                                    <input id="codigo" name="codigo" type="text" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>C&oacute;digo de Barras</label>
                                     <div class="input-group">
                                         <input id="barcode" name="barcode" type="text" class="form-control">
@@ -176,13 +238,24 @@
                                         </span>
                                     </div>
                                 </div>
+                                <div class="form-group col-md-4 mt-2">
+                                    <label>Marca</label>
+                                    <div class="input-group">
+                                        <select required id="brand" name="brand" class="form-control">
+                                            <option value="">--Elegir--</option>
+                                            @foreach ($marcas as $marca)
+                                                <option value="{{ $marca->id }}">{{ $marca->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" data-toggle="modal"
+                                                data-target="#modal-add-option" data-type="marca">+</button>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
-                                    <label>Marca</label>
-                                    <input id="brand" name="brand" type="text" class="form-control">
-                                </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Medida</label>
                                     <div class="input-group">
                                         <select required id="id_medida" name="id_medida" class="form-control">
@@ -197,9 +270,7 @@
                                         </span>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Categor&iacute;a</label>
                                     <div class="input-group">
                                         <select required id="id_categoria" name="id_categoria" class="form-control">
@@ -214,7 +285,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Ubicaci&oacute;n</label>
                                     <div class="input-group">
                                         <select name="location" id="location" class="form-control">
@@ -230,102 +301,166 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                {{-- <div class="form-group col-md-3 mt-2">
                                     <label>Moneda</label>
                                     <select required id="id_moneda" name="id_moneda" class="form-control">
                                         <option value="1">Soles</option>
                                         <option value="2">D&oacute;lar</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-12 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Precio de Venta</label>
                                     <input id="precio" name="precio" required value="0" type="text"
                                         class="form-control">
-                                </div>
-                                <div class="form-group col-md-12 mt-2">
+                                </div> --}}
+                                {{-- <div class="form-group col-md-3 mt-2">
                                     <label>Costo</label>
                                     <input id="costo" name="costo" value="0" type="text"
                                         class="form-control">
-                                </div>
-                                <div class="form-group col-md-6 mt-2">
+                                </div> --}}
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Cantidad Inicial</label>
                                     <input id="cantidad" name="cantidad" required type="text" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Cod. Sunat</label>
                                     <input id="codsunat" name="codsunat" type="text" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Peso U. en Kilos</label>
                                     <input id="peso" name="peso" type="text" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Afecto ICBP</label>
                                     <select id="iscbp" name="iscbp" class="form-control">
                                         <option value="0">No</option>
                                         <option value="1">S&iacute;</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Adjuntar Ficha T&eacute;cnica</label>
                                     <input type="file" id="technical_sheet" name="technical_sheet"
                                         class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>N&uacute;mero de Lote</label>
                                     <input id="batch_number" name="batch_number" type="text" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Fecha de Vencimiento</label>
                                     <input id="expiration_date" name="expiration_date" type="date"
                                         class="form-control">
                                 </div>
-                                <div class="form-group col-md-12 mt-2">
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6 mt-2">
                                     <label>Acci&oacute;n T&eacute;cnica</label>
                                     <textarea id="technical_action" name="technical_action" class="form-control"></textarea>
                                 </div>
-                                <div class="form-group col-md-12 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Adjuntar Imagen (PNG, JPG)</label>
                                     <input type="file" id="image" name="image" accept="image/*"
                                         class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Stock M&iacute;nimo</label>
                                     <input id="min_stock" name="min_stock" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-6" style="margin-bottom: unset;">
+                                    <h5 class="fw-bold">Detalle de precios x producto</h5>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Unidad Derivada</label>
                                     <div class="input-group">
-                                        <select id="unidad_derivada" name="unidad_derivada" class="form-control">
-                                            <!-- Opciones se llenar&aacute;n din&aacute;micamente -->
+                                        <select id="unidad_derivada" class="form-control">
+                                            @foreach ($unidadesDerivadas as $unidadDerivada)
+                                                <option value="{{ $unidadDerivada->id }}">{{ $unidadDerivada->nombre }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="button" data-toggle="modal"
                                                 data-target="#modal-add-derivada">+</button>
                                         </span>
                                     </div>
-
                                 </div>
-
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Precio Calculado</label>
-                                    <input type="text" id="precio_calculado" class="form-control" readonly>
+                                    <input type="text" id="precio_calculado" class="form-control" readonly hidden>
                                 </div>
-
-                                <div class="form-group col-md-6 mt-2">
-                                    <label>Precio Modificable</label>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Factor</label>
+                                    <input type="text" id="factor" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Precio Compra</label>
+                                    <input type="text" id="precio_compra" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>%Venta</label>
+                                    <input type="text" id="porcentaje_venta" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>P.publico</label>
                                     <input type="text" id="precio_modificable" class="form-control">
                                 </div>
-
-                                <button type="button" id="agregar_unidad" class="btn btn-primary mt-2">Agregar</button>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Pre.Especial</label>
+                                    <input type="text" id="precio_especial" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Prec.Minimo</label>
+                                    <input type="text" id="precio_minimo" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Precio Ultimo</label>
+                                    <input type="text" id="precio_ultimo" class="form-control">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Comision</label>
+                                    <input type="text" id="comision" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Com2</label>
+                                    <input type="text" id="comision2" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Comision3</label>
+                                    <input type="text" id="comision3" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Comision4</label>
+                                    <input type="text" id="comision4" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <button type="button" id="agregar_unidad"
+                                        class="btn btn-primary mt-2">Agregar</button>
+                                </div>
 
                                 <table id="unidades-table" class="table table-bordered mt-3">
                                     <thead>
                                         <tr>
-                                            <th>Tipo de Unidad</th>
-                                            <th>Costo</th>
+                                            <th>F.Venta</th>
+                                            <th>Factor</th>
+                                            <th>P.Compra</th>
+                                            <th>%V</th>
+                                            <th>P.Publi</th>
+                                            <th>P.Esp</th>
+                                            <th>P.Min</th>
+                                            <th>P.Ulti</th>
+                                            <th>P.Comis</th>
+                                            <th>Gan</th>
+                                            <th>C2</th>
+                                            <th>C3</th>
+                                            <th>C4</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -356,32 +491,38 @@
                         @csrf
                         <div class="modal-body" style="overflow-y: auto;">
                             <div class="row">
-                                <input type="text" id="edt-id" name="id" value="">
+                                <input type="text" id="edt-id" name="id" value="" hidden>
                                 <div class="form-group col-md-12 mt-2">
                                     <label>Descripci&oacute;n</label>
-                                    <textarea id="edt-descripcion" name="descripcion" required class="form-control"></textarea>
+                                    <input id="edt-descripcion" name="descripcion" required class="form-control"></input>
                                 </div>
                                 <div class="form-group col-md-12 mt-2">
                                     <label>Descripci&oacute;n Ticket</label>
-                                    <textarea id="edt-ticket_description" name="ticket_description" class="form-control"></textarea>
+                                    <input id="edt-ticket_description" name="ticket_description"
+                                        class="form-control"></input>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>C&oacute;digo Producto</label>
                                     <input id="edt-codigo" name="codigo" type="text" class="form-control" readonly>
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>C&oacute;digo de Barras</label>
                                     <input id="edt-barcode" name="barcode" type="text" class="form-control">
                                 </div>
+                                <div class="form-group col-md-4 mt-2">
+                                    <label>Marca</label>
+                                    <select required id="edt-brand" name="edt-brand" class="form-control">
+                                        <option value="">--Elegir--</option>
+                                        @foreach ($marcas as $marca)
+                                            <option value="{{ $marca->id }}">{{ $marca->nombre }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
-                                    <label>Marca</label>
-                                    <input id="edt-brand" name="brand" type="text" class="form-control">
-                                </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Medida</label>
                                     <select required id="edt-id_medida" name="id_medida" class="form-control">
                                         <option value="">--Elegir--</option>
@@ -390,9 +531,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Categor&iacute;a</label>
                                     <select required id="edt-id_categoria" name="id_categoria" class="form-control">
                                         @foreach ($categorias as $categoria)
@@ -401,7 +540,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Ubicaci&oacute;n</label>
                                     <select name="location" id="edt-location" class="form-control">
                                         @foreach ($ubicaciones as $ubicacions)
@@ -411,7 +550,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                {{-- <div class="form-group col-md-6 mt-2">
                                     <label>Moneda</label>
                                     <select required id="edt-id_moneda" name="id_moneda" class="form-control">
                                         <option value="1">Soles</option>
@@ -427,46 +566,49 @@
                                     <label>Costo</label>
                                     <input id="edt-costo" name="costo" value="0" type="text"
                                         class="form-control">
-                                </div>
-                                <div class="form-group col-md-6 mt-2">
+                                </div> --}}
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Cantidad Inicial</label>
                                     <input id="edt-cantidad" name="cantidad" required type="text"
                                         class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Cod. Sunat</label>
                                     <input id="edt-codsunat" name="codsunat" type="text" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Peso U. en Kilos</label>
                                     <input id="edt-peso" name="peso" type="text" class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Afecto ICBP</label>
                                     <select id="edt-iscbp" name="iscbp" class="form-control">
                                         <option value="0">No</option>
                                         <option value="1">S&iacute;</option>
                                     </select>
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Adjuntar Ficha T&eacute;cnica</label>
                                     <input type="file" id="edt-technical_sheet" name="technical_sheet"
                                         class="form-control">
                                     <a href="" target="_blank" id="file-preview" type="button"
                                         class="btn btn-primary">Ver</a>
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>N&uacute;mero de Lote</label>
                                     <input id="edt-batch_number" name="batch_number" type="text"
                                         class="form-control">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-4 mt-2">
                                     <label>Fecha de Vencimiento</label>
                                     <input id="edt-expiration_date" name="expiration_date" type="date"
                                         class="form-control">
-
                                 </div>
-                                <div class="form-group col-md-12 mt-2">
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6 mt-2">
                                     <label>Acci&oacute;n T&eacute;cnica</label>
                                     <textarea id="edt-technical_action" name="technical_action" class="form-control"></textarea>
                                 </div>
@@ -477,37 +619,102 @@
                                     <img id="img-preview" src="" alt="Vista previa de la imagen"
                                         style="max-width: 100%; height: auto; display: none;">
                                 </div>
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Stock M&iacute;nimo</label>
                                     <input id="edt-min_stock" name="min_stock" type="number" class="form-control">
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-6" style="margin-bottom: unset;">
+                                    <h5 class="fw-bold">Detalle de precios x producto</h5>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Unidad Derivada</label>
-                                    <select id="edt-unidad_derivada" name="unidad_derivada" class="form-control">
-                                        <!-- Opciones se llenar&aacute;n din&aacute;micamente -->
-                                    </select>
+                                    <div class="input-group">
+                                        <select id="edt-unidad_derivada" class="form-control">
+                                            @foreach ($unidadesDerivadas as $unidadDerivada)
+                                                <option value="{{ $unidadDerivada->id }}">{{ $unidadDerivada->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" data-toggle="modal"
+                                                data-target="#modal-add-derivada">+</button>
+                                        </span>
+                                    </div>
                                 </div>
-
-                                <div class="form-group col-md-6 mt-2">
+                                <div class="form-group col-md-3 mt-2">
                                     <label>Precio Calculado</label>
-                                    <input type="text" id="edt-precio_calculado" class="form-control" readonly>
+                                    <input type="text" id="edt-precio_calculado" class="form-control" readonly hidden>
                                 </div>
-
-                                <div class="form-group col-md-6 mt-2">
-                                    <label>Precio Modificable</label>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Factor</label>
+                                    <input type="text" id="edt-factor" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Precio Compra</label>
+                                    <input type="text" id="edt-precio_compra" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>%Venta</label>
+                                    <input type="text" id="edt-porcentaje_venta" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>P.publico</label>
                                     <input type="text" id="edt-precio_modificable" class="form-control">
                                 </div>
-
-                                <button type="button" id="edt-agregar_unidad"
-                                    class="btn btn-primary mt-2">Agregar</button>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Pre.Especial</label>
+                                    <input type="text" id="edt-precio_especial" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Prec.Minimo</label>
+                                    <input type="text" id="edt-precio_minimo" class="form-control">
+                                </div>
+                                <div class="form-group col-md-3 mt-2">
+                                    <label>Precio Ultimo</label>
+                                    <input type="text" id="edt-precio_ultimo" class="form-control">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Comision</label>
+                                    <input type="text" id="edt-comision" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Com2</label>
+                                    <input type="text" id="edt-comision2" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Comision3</label>
+                                    <input type="text" id="edt-comision3" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <label>Comision4</label>
+                                    <input type="text" id="edt-comision4" class="form-control" value="0">
+                                </div>
+                                <div class="form-group col-md-2 mt-2">
+                                    <button type="button" id="edt-agregar_unidad"
+                                        class="btn btn-primary mt-2">Agregar</button>
+                                </div>
 
                                 <table id="unidades-table" class="table table-bordered mt-3">
                                     <thead>
                                         <tr>
-                                            <th>Tipo de Unidad</th>
-                                            <th>Costo</th>
+                                            <th>F.Venta</th>
+                                            <th>Factor</th>
+                                            <th>P.Compra</th>
+                                            <th>%V</th>
+                                            <th>P.Publi</th>
+                                            <th>P.Esp</th>
+                                            <th>P.Min</th>
+                                            <th>P.Ulti</th>
+                                            <th>P.Comis</th>
+                                            <th>Gan</th>
+                                            <th>C2</th>
+                                            <th>C3</th>
+                                            <th>C4</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -522,6 +729,7 @@
                             <button type="submit" class="btn btn-primary">Actualizar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         </div>
+
                     </form>
                 </div>
             </div>
@@ -607,18 +815,18 @@
                                 <input type="text" class="form-control" id="nombreu_option" name="nombreu_option"
                                     required>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="unidad_option">Unidad</label>
                                 <select name="unidad_option" id="unidad_option" class="form-control">
                                     @foreach ($unidades as $unidad)
                                         <option value="{{ $unidad->id }}">{{ $unidad->nombre }}</option>
                                     @endforeach
                                 </select>
-                            </div>
-                            <div class="form-group">
+                            </div> --}}
+                            {{-- <div class="form-group">
                                 <label for="factor">Factor</label>
-                                <input type="number" class="form-control" id="factor" name="factor" required>
-                            </div>
+                                <input type="decimal" class="form-control" id="factor" name="factor" required>
+                            </div> --}}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

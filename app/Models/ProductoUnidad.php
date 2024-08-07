@@ -10,7 +10,21 @@ class ProductoUnidad extends Model
     use HasFactory;
 
     protected $table = 'producto_unidad';
-    protected $fillable = ['id_producto', 'id_unidad_derivada', 'costo'];
+    protected $fillable = [
+        'id_producto', 'id_unidad_derivada',
+        'factor',
+        'pcompra',
+        'porcentajeVenta',
+        'ppublico',
+        'pespecial',
+        'pminimo',
+        'pultimo',
+        'comision',
+        'ganancia',
+        'comision2',
+        'comision3',
+        'comision4',
+    ];
 
     public function producto()
     {

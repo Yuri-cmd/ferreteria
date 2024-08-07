@@ -23,9 +23,7 @@ class UnidadController extends Controller
         ]);
 
         $ubicacion = UnidadDerivada::create([
-            'id_unidad' => $request->input('id_unidad'),
             'nombre' => $request->input('nombre'),
-            'factor' => $request->input('factor'),
         ]);
 
         return response()->json($ubicacion);
