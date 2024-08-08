@@ -35,5 +35,9 @@ class Producto extends Model
         'technical_action',
         'image',
         'min_stock',
+        'uni_contenidas',
+        'stock_raccion',
+        'sucursal',
+        'stock_raccionNumber'
     ];
 }

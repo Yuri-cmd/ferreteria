@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contador;
 use App\Models\Producto;
 use App\Models\ProductoUnidad;
 use App\Models\Unidad;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
@@ -14,47 +17,62 @@ class ProductoController extends Controller
 
     public function store(Request $request)
     {
-        // Guardar el producto
-        $producto = Producto::create($request->except(['technical_sheet', 'image', 'costos']));
+        try {
+            // Guardar el producto
+            $producto = Producto::create($request->except(['technical_sheet', 'image', 'costos']));
 
-        // Procesar y guardar archivos si existen
-        if ($request->hasFile('technical_sheet')) {
-            $producto->technical_sheet = $request->file('technical_sheet')->store('technical_sheets', 'custom_public');
+            // Procesar y guardar archivos si existen
+            if ($request->hasFile('technical_sheet')) {
+                $producto->technical_sheet = $request->file('technical_sheet')->store('technical_sheets', 'custom_public');
+            }
+
+            if ($request->hasFile('image')) {
+                $producto->image = $request->file('image')->store('images', 'custom_public');
+            }
+
+            $producto->save();
+
+            // Guardar datos en producto_unidad
+            $costos = $request->input('costos', []);
+            if (is_string($costos)) {
+                $costos = json_decode($costos, true);
+            }
+            if ($costos) {
+                foreach ($costos as $costo) {
+                    ProductoUnidad::create([
+                        'id_producto' => $producto->id_producto,
+                        'id_unidad_derivada' => $costo['unidadId'],
+                        'factor' => $costo['factor'],
+                        'pcompra' => $costo['pcompra'],
+                        'porcentajeVenta' => $costo['v'],
+                        'ppublico' => $costo['ppublico'],
+                        'pespecial' => $costo['pespecial'],
+                        'pminimo' => $costo['pminimo'],
+                        'pultimo' => $costo['pultimo'],
+                        'comision' => $costo['comis'],
+                        'ganancia' => $costo['ga'],
+                        'comision2' => $costo['c2'],
+                        'comision3' => $costo['c3'],
+                        'comision4' => $costo['c4'],
+                    ]);
+                }
+            }
+            $contador = Contador::firstOrCreate(
+                ['nombre' => 'producto_codigo'],
+                ['valor' => 0]
+            );
+            // Incrementar el contador
+            $contador->valor++;
+            $contador->save();
+            return response()->json(['success' => true]);
+        } catch (QueryException $e) {
+            // Loguear el error
+            Log::error('Error al guardar el producto: ' . $e->getMessage());
+
+            // Redirigir con un mensaje de error
+            return response()->json(['success' => false, 'errors' => ['error' => ['El código ingresado ya existe.']]]);
         }
-
-        if ($request->hasFile('image')) {
-            $producto->image = $request->file('image')->store('images', 'custom_public');
-        }
-
-        $producto->save();
-
-        // Guardar datos en producto_unidad
-        $costos = $request->input('costos', []);
-        if (is_string($costos)) {
-            $costos = json_decode($costos, true);
-        }
-
-        foreach ($costos as $costo) {
-            ProductoUnidad::create([
-                'id_producto' => $producto->id_producto,
-                'id_unidad_derivada' => $costo['unidadId'],
-                'factor' => $costo['factor'],
-                'pcompra' => $costo['pcompra'],
-                'porcentajeVenta' => $costo['porcentajeVenta'],
-                'ppublico' => $costo['ppublico'],
-                'pespecial' => $costo['pespecial'],
-                'pminimo' => $costo['pminimo'],
-                'pultimo' => $costo['pultimo'],
-                'comision' => $costo['comision'],
-                'ganancia' => $costo['ganancia'],
-                'comision2' => $costo['comision2'],
-                'comision3' => $costo['comision3'],
-                'comision4' => $costo['comision4'],
-            ]);
-        }
-        return redirect()->back()->with('success', 'Producto guardado con éxito');
     }
-
     /**
      * Actualiza un producto existente.
      *
@@ -87,7 +105,11 @@ class ProductoController extends Controller
             'imagen' => 'nullable|file|image',
             'min_stock' => 'nullable|numeric',
             'unidad_derivada' => 'nullable|array',
-            'costos' => 'nullable|string'
+            'sucursal' => 'nullable|string',
+            'uni_contenidas' => 'nullable|string',
+            'stock_raccion' => 'nullable|string',
+            'costos' => 'nullable|string',
+            'stock_raccionNumber' => 'nullable|string',
         ]);
 
         // Encontrar el producto por ID
@@ -117,6 +139,10 @@ class ProductoController extends Controller
         $producto->expiration_date = $validatedData['expiration_date'];
         $producto->technical_action = $validatedData['technical_action'];
         $producto->min_stock = $validatedData['min_stock'];
+        $producto->uni_contenidas = $validatedData['uni_contenidas'];
+        $producto->stock_raccion = $validatedData['stock_raccion'];
+        $producto->sucursal = $validatedData['sucursal'];
+        $producto->stock_raccionNumber = $validatedData['stock_raccionNumber'];
 
         // Manejar la subida de la imagen
         if ($request->hasFile('imagen')) {
@@ -143,11 +169,29 @@ class ProductoController extends Controller
         if ($request->has('costos') && $request->input('costos')) {
             $costos = json_decode($request->input('costos'), true);
             foreach ($costos as $costo) {
-                ProductoUnidad::create([
-                    'id_producto' => $producto->id_producto,
-                    'id_unidad_derivada' => $costo['id'],
-                    'costo' => $costo['costo'],
-                ]);
+                // Verifica si el registro ya existe antes de crear uno nuevo
+                $existe = ProductoUnidad::where('id_producto', $producto->id_producto)
+                    ->where('id_unidad_derivada', $costo['unidadId'])
+                    ->exists();
+
+                if (!$existe) {
+                    ProductoUnidad::create([
+                        'id_producto' => $producto->id_producto,
+                        'id_unidad_derivada' => $costo['unidadId'],
+                        'factor' => $costo['factor'],
+                        'pcompra' => $costo['pcompra'],
+                        'porcentajeVenta' => $costo['v'],
+                        'ppublico' => $costo['ppublico'],
+                        'pespecial' => $costo['pespecial'],
+                        'pminimo' => $costo['pminimo'],
+                        'pultimo' => $costo['pultimo'],
+                        'comision' => $costo['comis'],
+                        'ganancia' => $costo['ga'],
+                        'comision2' => $costo['c2'],
+                        'comision3' => $costo['c3'],
+                        'comision4' => $costo['c4'],
+                    ]);
+                }
             }
         }
 
@@ -160,8 +204,7 @@ class ProductoController extends Controller
         $producto = Producto::find($request->productoId);
         $unidad = DB::select('SELECT
             producto_unidad.*,
-            unidad_derivada.nombre,
-            unidad_derivada.factor 
+            unidad_derivada.nombre
         FROM
             producto_unidad
             INNER JOIN unidad_derivada ON unidad_derivada.id = producto_unidad.id_unidad_derivada 
@@ -178,12 +221,15 @@ class ProductoController extends Controller
 
     public function generarCodigo()
     {
-        // Obtener el último producto
-        $ultimoProducto = Producto::orderBy('id_producto', 'desc')->first();
-        $ultimoCodigo = $ultimoProducto ? $ultimoProducto->codigo : '000000';
-
-        // Incrementar el último código
-        $nuevoCodigo = str_pad((int)$ultimoCodigo + 1, 6, '0', STR_PAD_LEFT);
+        // Obtener o crear el contador para los códigos
+        $contador = Contador::firstOrCreate(
+            ['nombre' => 'producto_codigo'],
+            ['valor' => 0]
+        );
+        // Incrementar el contador
+        $contador->valor++;
+        // Generar el nuevo código basado en el contador
+        $nuevoCodigo = str_pad($contador->valor, 6, '0', STR_PAD_LEFT);
 
         return response()->json(['codigo' => $nuevoCodigo]);
     }
@@ -237,5 +283,12 @@ class ProductoController extends Controller
         }
 
         return response()->json(['success' => false, 'message' => 'Producto no encontrado']);
+    }
+
+    public function delete(Request $request)
+    {
+        ProductoUnidad::where('id_producto', $request->id)->delete();
+        $producto = Producto::find($request->id);
+        $producto->delete();
     }
 }

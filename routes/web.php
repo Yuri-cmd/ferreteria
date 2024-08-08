@@ -9,6 +9,7 @@ use App\Http\Controllers\HistorialMovimientoController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProductoUnidadController;
+use App\Http\Controllers\SucursalController;
 use App\Http\Controllers\UbicacionController;
 use App\Http\Controllers\UnidadController;
 use App\Http\Controllers\UnidadMedidaController;
@@ -39,6 +40,7 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/unidad-medida', [UnidadMedidaController::class, 'store'])->name('unidad-medida.store');
     Route::post('/productos/update', [ProductoController::class, 'update'])->name('productos.update');
     Route::post('/productos/show', [ProductoController::class, 'show'])->name('productos.show');
+    Route::post('/productos/delete', [ProductoController::class, 'delete'])->name('producto.delete');
     Route::post('/historial/show', [HistorialMovimientoController::class, 'show'])->name('historial.show');
     Route::get('/almacen/compras', [ComprasController::class, 'index'])->name('compras');
     Route::post('/almacen/compras/comprasAll', [ComprasController::class, 'comprasAll'])->name('comprasAll');
@@ -47,9 +49,10 @@ Route::middleware(['auth.custom'])->group(function () {
     Route::post('/unidades-derivadas-store', [UnidadController::class, 'store'])->name('unidadDerivada.store');
     Route::post('/ubicaciones', [UbicacionController::class, 'store'])->name('ubicacion.store');
     Route::post('/categorias', [CategoriaController::class, 'store'])->name('categoria.store');
+    Route::post('/sucursal', [SucursalController::class, 'store'])->name('sucursal.store');
     Route::post('/marcas', [MarcaController::class, 'store'])->name('marca.store');
     Route::post('/delete/unidad-derivada', [ProductoUnidadController::class, 'delete'])->name('productounidad.delete');
     Route::post('/productos/clonar', [ProductoController::class, 'clonar'])->name('productos.clonar');
     Route::post('/productos/updateStatus', [ProductoController::class, 'updateStatus'])->name('productos.updateStatus');
-
+    Route::post('/update/unidad-derivada', [ProductoUnidadController::class, 'update'])->name('productounidad.update');
 });
