@@ -419,7 +419,7 @@
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
                                     <label>Factor</label>
-                                    <input type="text" id="factor" class="form-control">
+                                    <input type="text" id="factor" class="form-control" value="1">
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
                                     <label>Precio Compra</label>

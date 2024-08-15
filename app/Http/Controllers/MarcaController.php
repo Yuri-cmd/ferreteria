@@ -14,7 +14,7 @@ class MarcaController extends Controller
         ]);
 
         $categoria = Marca::create([
-            'nombre' => $request->input('nombre'),
+            'nombre' => strtoupper($request->input('nombre')),
         ]);
 
         return response()->json($categoria);

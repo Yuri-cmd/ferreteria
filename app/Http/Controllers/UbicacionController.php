@@ -14,7 +14,7 @@ class UbicacionController extends Controller
         ]);
 
         $ubicacion = Ubicacion::create([
-            'nombre' => $request->input('nombre'),
+            'nombre' => strtoupper($request->input('nombre')),
         ]);
 
         return response()->json($ubicacion);

@@ -14,7 +14,7 @@ class CategoriaController extends Controller
         ]);
 
         $categoria = CategoriaProducto::create([
-            'nombre' => $request->input('nombre'),
+            'nombre' => strtoupper($request->input('nombre')),
         ]);
 
         return response()->json($categoria);

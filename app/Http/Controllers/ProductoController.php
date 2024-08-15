@@ -66,11 +66,21 @@ class ProductoController extends Controller
             $contador->save();
             return response()->json(['success' => true]);
         } catch (QueryException $e) {
-            // Loguear el error
-            Log::error('Error al guardar el producto: ' . $e->getMessage());
+            // Analizar el mensaje de error para identificar el campo duplicado
+            $errorMessage = $e->getMessage();
+            if (strpos($errorMessage, "for key 'codigo'") !== false) {
+                $customMessage = 'Error: El código ya existe.';
+            } elseif (strpos($errorMessage, "for key 'descripcion'") !== false) {
+                $customMessage = 'Error: La descripción ya existe.';
+            } else {
+                $customMessage = 'Error al guardar el producto: ' . $errorMessage;
+            }
+
+            // Guardar el error en los logs
+            Log::error($customMessage);
 
             // Redirigir con un mensaje de error
-            return response()->json(['success' => false, 'errors' => ['error' => ['El código ingresado ya existe.']]]);
+            return response()->json(['success' => false, 'errors' => ['error' => [$customMessage]]]);
         }
     }
     /**
@@ -219,7 +229,7 @@ class ProductoController extends Controller
         return response()->json(['producto' => $producto, 'unidad' => $unidad]);
     }
 
-    public function generarCodigo()
+    public function generarCodigo($tipo = false)
     {
         // Obtener o crear el contador para los códigos
         $contador = Contador::firstOrCreate(
@@ -230,7 +240,9 @@ class ProductoController extends Controller
         $contador->valor++;
         // Generar el nuevo código basado en el contador
         $nuevoCodigo = str_pad($contador->valor, 6, '0', STR_PAD_LEFT);
-
+        if ($tipo) {
+            return $nuevoCodigo;
+        }
         return response()->json(['codigo' => $nuevoCodigo]);
     }
 
@@ -238,20 +250,20 @@ class ProductoController extends Controller
     {
         $ids = $request->input('ids', []);
         $cloned = 0;
+        $newProductIds = [];
 
         foreach ($ids as $id) {
             $producto = Producto::find($id);
             if ($producto) {
-                // Generar un nuevo código único
-                $ultimoCodigo = Producto::orderBy('codigo', 'desc')->first()->codigo;
-                $nuevoCodigo = str_pad(intval($ultimoCodigo) + 1, 6, '0', STR_PAD_LEFT);
-
                 // Clonar el registro
                 $nuevoProducto = $producto->replicate();
-                $nuevoProducto->codigo = $nuevoCodigo; // Asigna el nuevo código
+                $nuevoProducto->descripcion = $producto->descripcion.'c';
+                $nuevoProducto->codigo = $this->generarCodigo(true); 
                 $nuevoProducto->save();
 
                 $cloned++;
+                $newProductIds[] = $nuevoProducto->id_producto;
+
                 // Clonar las unidades relacionadas
                 $productoUnidades = ProductoUnidad::where('id_producto', $id)->get();
                 foreach ($productoUnidades as $productoUnidad) {
@@ -259,15 +271,24 @@ class ProductoController extends Controller
                     $nuevaUnidad->id_producto = $nuevoProducto->id_producto; // Asocia la nueva unidad con el nuevo producto
                     $nuevaUnidad->save();
                 }
+
+                $contador = Contador::firstOrCreate(
+                    ['nombre' => 'producto_codigo'],
+                    ['valor' => 0]
+                );
+                // Incrementar el contador
+                $contador->valor++;
+                $contador->save();
             }
         }
 
         if ($cloned > 0) {
-            return response()->json(['success' => true, 'message' => "$cloned productos clonados."]);
+            return response()->json(['success' => true, 'message' => "$cloned productos clonados.", 'newProductIds' => $newProductIds]);
         } else {
             return response()->json(['success' => false, 'message' => 'No se clonó ningún producto.']);
         }
     }
+
 
     public function updateStatus(Request $request)
     {

@@ -23,7 +23,7 @@ class UnidadController extends Controller
         ]);
 
         $ubicacion = UnidadDerivada::create([
-            'nombre' => $request->input('nombre'),
+            'nombre' => strtoupper($request->input('nombre')),
         ]);
 
         return response()->json($ubicacion);

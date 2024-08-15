@@ -127,8 +127,10 @@
         // Limpia los campos del formulario
         function limpiarCampos() {
             $('#unidad_derivada').val('');
-            $('#precio_calculado, #precio_modificable, #factor, #precio_compra, #porcentaje_venta, #precio_especial, #precio_minimo, #precio_ultimo, #comision, #comision2, #comision3, #comision4')
+            $('#precio_calculado, #precio_modificable, #factor, #precio_compra, #porcentaje_venta, #precio_especial, #precio_minimo, #precio_ultimo')
                 .val('');
+            $('#factor').val(1);
+            $('#comision, #comision2, #comision3, #comision4').val(0)
         }
 
         // Edita una fila

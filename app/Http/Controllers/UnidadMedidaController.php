@@ -17,7 +17,7 @@ class UnidadMedidaController extends Controller
 
         // Crear y guardar la nueva unidad de medida
         $unidad = Unidad::create([
-            'nombre' => $request->input('nombre'),
+            'nombre' => strtoupper($request->input('nombre')),
         ]);
         // Redireccionar con un mensaje de éxito
         return response()->json($unidad);
