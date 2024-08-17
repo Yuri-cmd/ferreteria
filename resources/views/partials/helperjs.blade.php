@@ -61,8 +61,11 @@
                     errorMsg += value[0] +
                         '\n'; // Concatenar todos los errores
                 });
-
-                alert(errorMsg); // Mostrar alert con los errores
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: errorMsg,
+                });
             }
         }
 
@@ -76,27 +79,40 @@
             });
         }
 
-        // Actualiza una fila existente
         function updateRow(row, data, ga, unidadId) {
-            row.find('td').each(function(index) {
-                const value = index === 0 ? $('#unidad_derivada option:selected').text() : Object.values(data)[
-                    index - 1] || ga;
-                $(this).text(value);
-            });
-            row.attr('data-unidad-id', unidadId); // Actualiza el atributo data-id
+            // Actualiza el atributo data-unidad-id
+            $(row).attr('data-unidad-id', unidadId);
+
+            // Obtén todas las celdas de la fila
+            const cells = $(row).find('td');
+
+            // Solo actualiza las celdas relevantes
+            $(cells[0]).text(data.unidadNombre); // Ejemplo para la primera celda
+            $(cells[1]).text(data.factor);
+            $(cells[2]).text(data.pcompra);
+            $(cells[3]).text(data.v);
+            $(cells[4]).text(data.ppublico);
+            $(cells[5]).text(data.pespecial);
+            $(cells[6]).text(data.pminimo);
+            $(cells[7]).text(data.pultimo);
+            $(cells[8]).text(data.comis);
+            $(cells[9]).text(data.c2);
+            $(cells[10]).text(data.c3);
+            $(cells[11]).text(data.c4);
+            $(cells[12]).text(ga); // Ganancia (ajusta el índice según la posición correcta)
         }
 
         // Agrega una nueva fila
         function addRow(data, ga, unidadId) {
             $('#unidades-body').append(`<tr data-unidad-id="${unidadId}">
-                        ${Object.values(data).map(value => `<td>${value}</td>`).join('')}
-                        <td>${ga}</td>
-                        <td>
-                            <button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="bi bi-trash-fill"></i></button>
-                            <button type="button" class="btn btn-primary" onclick="editRow(this)"><i class="bi bi-pencil-fill"></i></button>
-                            <button type="button" class="btn btn-success" onclick="saveRow(this)" style="display: none;"><i class="bi bi-check-lg"></i></button>
-                        </td>
-                    </tr>`);
+                ${Object.values(data).map(value => `<td>${value}</td>`).join('')}
+                <td>${ga}</td>
+                <td>
+                    <button type="button" class="btn btn-danger" onclick="removeRow(this)"><i class="bi bi-trash-fill"></i></button>
+                    <button type="button" class="btn btn-primary" onclick="editRow(this)"><i class="bi bi-pencil-fill"></i></button>
+                    <button type="button" class="btn btn-success" onclick="saveRow(this)" style="display: none;"><i class="bi bi-check-lg"></i></button>
+                </td>
+            </tr>`);
         }
 
         // Actualiza el campo oculto con los costos
@@ -105,7 +121,7 @@
             $(`#${idBody} tr`).each(function() {
                 const row = $(this);
                 const data = {
-                    unidadId: unidadId,
+                    unidadId: row.attr('data-unidad-id'), // Usa el atributo data-unidad-id
                     factor: row.find('td').eq(1).text(),
                     pcompra: row.find('td').eq(2).text(),
                     v: row.find('td').eq(3).text(),

@@ -27,13 +27,13 @@ class AlmacenController extends Controller
                                     LEFT JOIN producto_unidad p on p.id_producto = pr.id_producto
                                 GROUP BY
                                     pr.id_producto');
-        $unidades = Unidad::all();
-        $categorias = CategoriaProducto::all();
-        $ubicacion = Ubicacion::all();
-        $ubicaciones = Ubicacion::all();
-        $unidadesDerivadas = UnidadDerivada::all();
-        $marcas = Marca::all();
-        $sucursales = Sucursal::all();
+        $unidades = Unidad::orderBy('nombre', 'asc')->get();
+        $categorias = CategoriaProducto::orderBy('nombre', 'asc')->get();
+        $ubicacion = Ubicacion::orderBy('nombre', 'asc')->get();
+        $ubicaciones = Ubicacion::orderBy('nombre', 'asc')->get();
+        $unidadesDerivadas = UnidadDerivada::orderBy('nombre', 'asc')->get();
+        $marcas = Marca::orderBy('nombre', 'asc')->get();
+        $sucursales = Sucursal::orderBy('nombre', 'asc')->get();
         return view('almacen.index', compact('productos', 'unidades', 'categorias', 'ubicacion', 'ubicaciones', 'unidadesDerivadas', 'marcas', 'sucursales'));
     }
 }

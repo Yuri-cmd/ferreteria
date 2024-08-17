@@ -158,6 +158,10 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(data) {
+                        if (data.success == false) {
+                            alertError(data.errors);
+                            return
+                        }
                         $('#modal-add-option').modal('hide');
                         $('#' + id).append(
                             `<option value="${data.id}">${data.nombre}</option>`);
@@ -168,7 +172,7 @@
                         });
                     },
                     error: function(xhr) {
-                        console.error('Error:', xhr.responseText);
+                        alertError(xhr.responseJSON.errors)
                     }
                 });
             });
@@ -184,198 +188,179 @@
             });
             // Clonar registros seleccionados
             $('#clone-button').click(function() {
-                var selectedIds = [];
+                var selectedIds = '';
                 $('.select-checkbox:checked').each(function() {
-                    selectedIds.push($(this).val());
+                    selectedIds = $(this).val();
                 });
 
-                if (selectedIds.length > 0) {
-                    // Realizar una solicitud AJAX para clonar los registros en la base de datos
+                if (selectedIds !== '') {
                     $.ajax({
-                        url: '{{ route('productos.clonar') }}', // Ruta para clonar en tu controlador Laravel
+                        url: `{{ route('productos.show') }}`,
                         method: 'POST',
                         data: {
                             _token: '{{ csrf_token() }}',
-                            ids: selectedIds
+                            productoId: selectedIds
                         },
-                        success: function(response) {
-                            // Manejar la respuesta
-                            if (response.success) {
-                                // Abrir el modal de edición para cada nuevo producto clonado
-                                response.newProductIds.forEach(function(productoId) {
-                                    $.ajax({
-                                        url: `{{ route('productos.show') }}`,
-                                        method: 'POST',
-                                        data: {
-                                            _token: '{{ csrf_token() }}',
-                                            productoId: productoId
-                                        },
-                                        success: function(data) {
-                                            // Rellenar los campos del formulario con los datos del producto
-                                            let producto = data.producto;
-                                            $('#edt-id').val(producto
-                                                .id_producto);
-                                            $('#edt-descripcion').val(
-                                                producto.descripcion);
-                                            $('#edt-ticket_description')
-                                                .val(producto
-                                                    .ticket_description);
-                                            $('#edt-codigo').val(producto
-                                                .codigo);
-                                            $('#edt-barcode').val(producto
-                                                .barcode);
-                                            $('#edt-brand').val(producto
-                                                .brand);
-                                            $('#edt-id_medida').val(producto
-                                                .id_medida);
-                                            $('#edt-id_categoria').val(
-                                                producto.id_categoria);
-                                            $('#edt-location').val(producto
-                                                .location);
-                                            $('#edt-id_moneda').val(producto
-                                                .id_moneda);
-                                            $('#edt-precio').val(producto
-                                                .precio);
-                                            $('#edt-costo').val(producto
-                                                .costo);
-                                            $('#edt-cantidad').val(producto
-                                                .cantidad);
-                                            $('#edt-codsunat').val(producto
-                                                .codsunat);
-                                            $('#edt-peso').val(producto
-                                                .peso);
-                                            $('#edt-iscbp').val(producto
-                                                .iscbp);
-                                            $('#edt-batch_number').val(
-                                                producto.batch_number);
-                                            $('#edt-technical_action').val(
-                                                producto
-                                                .technical_action);
-                                            $('#edt-expiration_date').val(
-                                                producto.expiration_date
-                                            );
-                                            $('#edt-min_stock').val(producto
-                                                .min_stock);
-                                            $('#edt-uni_contenidas').val(
-                                                producto
-                                                .uni_contenidas ?? 0);
-                                            $('#edt-stock_raccion').val(
-                                                producto
-                                                .stock_raccion ?? 0);
-                                            $('#edt-sucursal').val(producto
-                                                .sucursal);
-                                            $('#edt-stock_raccionNumber')
-                                                .val(producto
-                                                    .stock_raccionNumber);
+                        success: function(data) {
+                            // Rellenar los campos del formulario con los datos del producto
+                            let producto = data.producto;
+                            $('#id').val(producto
+                                .id_producto);
+                            $('#descripcion').val(
+                                producto.descripcion);
+                            $('#ticket_description')
+                                .val(producto
+                                    .ticket_description);
+                            $('#codigo').val(producto
+                                .codigo);
+                            $('#barcode').val(producto
+                                .barcode);
+                            $('#brand').val(producto
+                                .brand);
+                            $('#id_medida').val(producto
+                                .id_medida);
+                            $('#id_categoria').val(
+                                producto.id_categoria);
+                            $('#location').val(producto
+                                .location);
+                            $('#id_moneda').val(producto
+                                .id_moneda);
+                            $('#precio').val(producto
+                                .precio);
+                            $('#costo').val(producto
+                                .costo);
+                            $('#cantidad').val(producto
+                                .cantidad);
+                            $('#codsunat').val(producto
+                                .codsunat);
+                            $('#peso').val(producto
+                                .peso);
+                            $('#iscbp').val(producto
+                                .iscbp);
+                            $('#batch_number').val(
+                                producto.batch_number);
+                            $('#technical_action').val(
+                                producto
+                                .technical_action);
+                            $('#expiration_date').val(
+                                producto.expiration_date
+                            );
+                            $('#min_stock').val(producto
+                                .min_stock);
+                            $('#uni_contenidas').val(
+                                producto
+                                .uni_contenidas ?? 0);
+                            $('#stock_raccion').val(
+                                producto
+                                .stock_raccion ?? 0);
+                            $('#sucursal').val(producto
+                                .sucursal);
+                            $('#stock_raccionNumber')
+                                .val(producto
+                                    .stock_raccionNumber);
 
-                                            // Mostrar la imagen del producto si existe
-                                            if (producto.image) {
-                                                $('#img-preview').attr(
-                                                    'src',
-                                                    `{{ env('APP_URL') }}/storage/${producto.image}`
-                                                ).show();
-                                            } else {
-                                                $('#img-preview').hide();
-                                            }
-
-                                            if (producto.technical_sheet) {
-                                                $('#file-preview').attr(
-                                                    'href',
-                                                    `{{ env('APP_URL') }}/storage/${producto.technical_sheet}`
-                                                )
-                                            } else {
-                                                $('#file-preview').hide();
-                                            }
-
-                                            // Rellenar las unidades derivadas en la tabla
-                                            var tableBody = $(
-                                                '#unidades-bodyEdit');
-                                            var newRow = '';
-                                            $.each(data.unidad, function(i,
-                                                v) {
-                                                newRow += '<tr>';
-                                                newRow += '<td>' + v
-                                                    .nombre +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .factor)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .pcompra)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .porcentajeVenta
-                                                    ).toFixed(
-                                                        2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .ppublico)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .pespecial)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .pminimo)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .pultimo)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .comision)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .ganancia)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .comision2)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .comision3)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>' +
-                                                    parseFloat(v
-                                                        .comision4)
-                                                    .toFixed(2) +
-                                                    '</td>';
-                                                newRow += '<td>';
-                                                newRow +=
-                                                    `<button type="button" class="btn btn-danger btn-sm" onclick="removeRowEditBD(this,'${v.id}')"><i class="bi bi-trash-fill"></i></button>
-                                               <button type="button" class="btn btn-primary btn-sm" onclick="editRow(this)"><i class="bi bi-pencil-fill"></i></button>
-                                               <button type="button" class="btn btn-success btn-sm" style="display: none;" onclick="saveRowEditBD(this,'${v.id}')"><i class="bi bi-check-lg"></i></button>`;
-                                                newRow += '</td>';
-                                                newRow += '</tr>';
-                                            });
-                                            tableBody.html(newRow);
-
-                                            $('#modal-edt-prod').modal(
-                                                'show');
-                                        }
-                                    });
-                                });
+                            // Mostrar la imagen del producto si existe
+                            if (producto.image) {
+                                $('#img-preview').attr(
+                                    'src',
+                                    `{{ env('APP_URL') }}/storage/${producto.image}`
+                                ).show();
                             } else {
-                                alert('Hubo un error al clonar los registros');
+                                $('#img-preview').hide();
                             }
+
+                            if (producto.technical_sheet) {
+                                $('#file-preview').attr(
+                                    'href',
+                                    `{{ env('APP_URL') }}/storage/${producto.technical_sheet}`
+                                )
+                            } else {
+                                $('#file-preview').hide();
+                            }
+
+                            // Rellenar las unidades derivadas en la tabla
+                            var tableBody = $(
+                                '#unidades-body');
+                            var newRow = '';
+                            $.each(data.unidad, function(i,
+                                v) {
+                                newRow += '<tr>';
+                                newRow += '<td>' + v
+                                    .nombre +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .factor)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .pcompra)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .porcentajeVenta
+                                    ).toFixed(
+                                        2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .ppublico)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .pespecial)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .pminimo)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .pultimo)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .comision)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .ganancia)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .comision2)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .comision3)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>' +
+                                    parseFloat(v
+                                        .comision4)
+                                    .toFixed(2) +
+                                    '</td>';
+                                newRow += '<td>';
+                                newRow +=
+                                    `<button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this,'${v.id}')"><i class="bi bi-trash-fill"></i></button>
+                                               <button type="button" class="btn btn-primary btn-sm" onclick="editRow(this)"><i class="bi bi-pencil-fill"></i></button>
+                                               <button type="button" class="btn btn-success btn-sm" style="display: none;" onclick="saveRow(this,'${v.id}')"><i class="bi bi-check-lg"></i></button>`;
+                                newRow += '</td>';
+                                newRow += '</tr>';
+                            });
+                            tableBody.html(newRow);
+                            $('#costos').val(JSON.stringify(data.unidad));
+                            $('#modal-add-prod').modal(
+                                'show');
                         }
                     });
                 } else {

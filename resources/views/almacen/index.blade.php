@@ -165,7 +165,7 @@
                                                             value="{{ $producto->id_producto }}"></td>
                                                     <td>{{ $producto->id_producto }}</td>
                                                     <td>{{ $producto->codigo }}</td>
-                                                    <td>{{ $producto->descripcion }}</td>
+                                                    <td>{{ strtoupper($producto->descripcion) }}</td>
                                                     <td>{{ $producto->codsunat }}</td>
                                                     <td>{{ $producto->unidad_nombre }}</td>
                                                     <td>{{ $producto->stock_raccionNumber }}</td>
@@ -209,7 +209,8 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modal-add-prod" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="modal-add-prod" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true"
+            data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -329,8 +330,8 @@
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
                                     <label></label>
-                                    <input id="stock_raccionNumber" name="stock_raccionNumber" style="color: red" required type="text"
-                                        class="form-control" readonly>
+                                    <input id="stock_raccionNumber" name="stock_raccionNumber" style="color: red"
+                                        required type="text" class="form-control" readonly>
                                 </div>
                             </div>
                             <div class="row">
@@ -407,10 +408,12 @@
                                     <div class="input-group">
                                         <select id="unidad_derivada" class="form-control">
                                             @foreach ($unidadesDerivadas as $unidadDerivada)
-                                                <option value="{{ $unidadDerivada->id }}">{{ $unidadDerivada->nombre }}
+                                                <option value="{{ $unidadDerivada->id }}" @selected($unidadDerivada->nombre == "UNIDAD")>
+                                                    {{ $unidadDerivada->nombre }}
                                                 </option>
                                             @endforeach
                                         </select>
+                                        
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="button" data-toggle="modal"
                                                 data-target="#modal-add-option" data-type="derivada">+</button>
@@ -502,7 +505,7 @@
         </div>
 
         <div class="modal fade" id="modal-edt-prod" tabindex="-1" aria-labelledby="exampleModalLabel"
-            aria-hidden="true">
+            aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -511,6 +514,7 @@
                     <form id="edit-product-form" enctype="multipart/form-data">
                         @csrf
                         <div class="modal-body" style="overflow-y: auto;">
+                            @csrf
                             <div class="row">
                                 <input type="text" id="edt-id" name="id" value="" hidden>
                                 <div class="form-group col-md-6 mt-2">
@@ -527,7 +531,7 @@
                             <div class="row">
                                 <div class="form-group col-md-3 mt-2">
                                     <label>C&oacute;digo Producto</label>
-                                    <input id="edt-codigo" name="codigo" type="text" class="form-control" readonly>
+                                    <input id="edt-codigo" name="codigo" type="text" class="form-control">
                                 </div>
                                 @error('codigo')
                                     <div class="text-danger">{{ $message }}</div>
@@ -590,8 +594,8 @@
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
                                     <label></label>
-                                    <input id="edt-stock_raccionNumber" name="stock_raccionNumber" style="color: red" required type="text"
-                                        class="form-control" readonly>
+                                    <input id="edt-stock_raccionNumber" name="stock_raccionNumber" style="color: red"
+                                        required type="text" class="form-control" readonly>
                                 </div>
                             </div>
                             <div class="row">

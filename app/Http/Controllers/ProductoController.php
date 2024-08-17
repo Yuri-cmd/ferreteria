@@ -54,6 +54,7 @@ class ProductoController extends Controller
                         'comision2' => $costo['c2'],
                         'comision3' => $costo['c3'],
                         'comision4' => $costo['c4'],
+                        'id_moneda' => 1,
                     ]);
                 }
             }
@@ -75,9 +76,6 @@ class ProductoController extends Controller
             } else {
                 $customMessage = 'Error al guardar el producto: ' . $errorMessage;
             }
-
-            // Guardar el error en los logs
-            Log::error($customMessage);
 
             // Redirigir con un mensaje de error
             return response()->json(['success' => false, 'errors' => ['error' => [$customMessage]]]);
@@ -257,7 +255,7 @@ class ProductoController extends Controller
             if ($producto) {
                 // Clonar el registro
                 $nuevoProducto = $producto->replicate();
-                $nuevoProducto->descripcion = $producto->descripcion.'c';
+                $nuevoProducto->descripcion = $producto->descripcion;
                 $nuevoProducto->codigo = $this->generarCodigo(true); 
                 $nuevoProducto->save();
 
