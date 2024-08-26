@@ -5,11 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Contador;
 use App\Models\Producto;
 use App\Models\ProductoUnidad;
-use App\Models\Unidad;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ProductoController extends Controller
@@ -29,7 +27,7 @@ class ProductoController extends Controller
             if ($request->hasFile('image')) {
                 $producto->image = $request->file('image')->store('images', 'custom_public');
             }
-
+            $producto->id_moneda = 1;
             $producto->save();
 
             // Guardar datos en producto_unidad
@@ -41,20 +39,19 @@ class ProductoController extends Controller
                 foreach ($costos as $costo) {
                     ProductoUnidad::create([
                         'id_producto' => $producto->id_producto,
-                        'id_unidad_derivada' => $costo['unidadId'],
+                        'id_unidad_derivada' => $costo['unidadId'] ?? $costo['id_unidad_derivada'],
                         'factor' => $costo['factor'],
                         'pcompra' => $costo['pcompra'],
-                        'porcentajeVenta' => $costo['v'],
+                        'porcentajeVenta' => $costo['v'] ?? $costo['porcentajeVenta'],
                         'ppublico' => $costo['ppublico'],
                         'pespecial' => $costo['pespecial'],
                         'pminimo' => $costo['pminimo'],
                         'pultimo' => $costo['pultimo'],
-                        'comision' => $costo['comis'],
-                        'ganancia' => $costo['ga'],
-                        'comision2' => $costo['c2'],
-                        'comision3' => $costo['c3'],
-                        'comision4' => $costo['c4'],
-                        'id_moneda' => 1,
+                        'comision' => $costo['comis'] ?? $costo['comision'],
+                        'ganancia' => $costo['ga'] ?? $costo['ganancia'],
+                        'comision2' => $costo['c2'] ?? $costo['comision2'],
+                        'comision3' => $costo['c3'] ?? $costo['comision3'],
+                        'comision4' => $costo['c4'] ?? $costo['comision4'],
                     ]);
                 }
             }
@@ -67,12 +64,16 @@ class ProductoController extends Controller
             $contador->save();
             return response()->json(['success' => true]);
         } catch (QueryException $e) {
-            // Analizar el mensaje de error para identificar el campo duplicado
             $errorMessage = $e->getMessage();
+            if (!mb_check_encoding($errorMessage, 'UTF-8')) {
+                $errorMessage = utf8_encode($errorMessage);
+            }
+
+            // Analiza el mensaje de error para identificar el campo duplicado
             if (strpos($errorMessage, "for key 'codigo'") !== false) {
-                $customMessage = 'Error: El código ya existe.';
+                $customMessage = 'Error: El codigo ya existe.';
             } elseif (strpos($errorMessage, "for key 'descripcion'") !== false) {
-                $customMessage = 'Error: La descripción ya existe.';
+                $customMessage = 'Error: La descripcion ya existe.';
             } else {
                 $customMessage = 'Error al guardar el producto: ' . $errorMessage;
             }
@@ -151,7 +152,7 @@ class ProductoController extends Controller
         $producto->stock_raccion = $validatedData['stock_raccion'];
         $producto->sucursal = $validatedData['sucursal'];
         $producto->stock_raccionNumber = $validatedData['stock_raccionNumber'];
-
+        $producto->id_moneda = 1;
         // Manejar la subida de la imagen
         if ($request->hasFile('imagen')) {
             // Eliminar la imagen antigua si existe
@@ -256,7 +257,7 @@ class ProductoController extends Controller
                 // Clonar el registro
                 $nuevoProducto = $producto->replicate();
                 $nuevoProducto->descripcion = $producto->descripcion;
-                $nuevoProducto->codigo = $this->generarCodigo(true); 
+                $nuevoProducto->codigo = $this->generarCodigo(true);
                 $nuevoProducto->save();
 
                 $cloned++;

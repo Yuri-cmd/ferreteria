@@ -398,7 +398,7 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-6" style="margin-bottom: unset;">
-                                    <h5 class="fw-bold">Detalle de precios x producto</h5>
+                                    <h4 class="fw-bold"><strong>Detalle de precios x producto</strong></h4>
                                 </div>
                             </div>
                             <hr style="margin: 0">
@@ -408,12 +408,12 @@
                                     <div class="input-group">
                                         <select id="unidad_derivada" class="form-control">
                                             @foreach ($unidadesDerivadas as $unidadDerivada)
-                                                <option value="{{ $unidadDerivada->id }}" @selected($unidadDerivada->nombre == "UNIDAD")>
+                                                <option value="{{ $unidadDerivada->id }}" @selected($unidadDerivada->nombre == 'UNIDAD')>
                                                     {{ $unidadDerivada->nombre }}
                                                 </option>
                                             @endforeach
                                         </select>
-                                        
+
                                         <span class="input-group-btn">
                                             <button class="btn btn-default" type="button" data-toggle="modal"
                                                 data-target="#modal-add-option" data-type="derivada">+</button>
@@ -437,11 +437,11 @@
                                     <input type="text" id="precio_modificable" class="form-control">
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
-                                    <label>Pre.Especial</label>
+                                    <label>Pre.Mayor</label>
                                     <input type="text" id="precio_especial" class="form-control">
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
-                                    <label>Prec.Minimo</label>
+                                    <label>Prec.Ferreteria</label>
                                     <input type="text" id="precio_minimo" class="form-control">
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
@@ -477,8 +477,8 @@
                                             <th>P.Compra</th>
                                             <th>%V</th>
                                             <th>P.Publi</th>
-                                            <th>P.Esp</th>
-                                            <th>P.Min</th>
+                                            <th>P.mayor</th>
+                                            <th>P.Ferr</th>
                                             <th>P.Ulti</th>
                                             <th>P.Comis</th>
                                             <th>Gan</th>
@@ -662,7 +662,7 @@
                             </div>
                             <div class="row">
                                 <div class="form-group col-md-6" style="margin-bottom: unset;">
-                                    <h5 class="fw-bold">Detalle de precios x producto</h5>
+                                    <h4 class="fw-bold"><strong>Detalle de precios x producto</strong></h4>
                                 </div>
                             </div>
                             <hr>
@@ -699,11 +699,11 @@
                                     <input type="text" id="edt-precio_modificable" class="form-control">
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
-                                    <label>Pre.Especial</label>
+                                    <label>Pre.Mayor</label>
                                     <input type="text" id="edt-precio_especial" class="form-control">
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
-                                    <label>Prec.Minimo</label>
+                                    <label>Prec.Ferreteria</label>
                                     <input type="text" id="edt-precio_minimo" class="form-control">
                                 </div>
                                 <div class="form-group col-md-2 mt-2">
@@ -738,8 +738,8 @@
                                             <th>P.Compra</th>
                                             <th>%V</th>
                                             <th>P.Publi</th>
-                                            <th>P.Esp</th>
-                                            <th>P.Min</th>
+                                            <th>P.Mayor</th>
+                                            <th>P.Ferr</th>
                                             <th>P.Ulti</th>
                                             <th>P.Comis</th>
                                             <th>Gan</th>
